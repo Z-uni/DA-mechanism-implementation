@@ -35,7 +35,7 @@ class Proposer:
 
 class Receiver(ABC):
     """
-    受入側（学習塾の講師、病院、企業など）の【抽象ベースクラス】
+    受入側
     このクラスを直接は使わず、環境ごとのルールを持たせた子クラスを作って使います。
     """
     def __init__(self, receiver_id: str):
