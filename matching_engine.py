@@ -57,10 +57,12 @@ class Receiver(ABC):
 def generalized_deferred_acceptance(
     proposers: Dict[str, Proposer], 
     receivers: Dict[str, Receiver], 
-    contracts: Dict[str, Contract]
+    contracts: Dict[str, Contract],
+    trace: Optional[List[Dict[str, Any]]] = None
 ) -> List[Contract]:
     """
     一般化DAアルゴリズム (Proposer-Proposing)
+    trace にリストを渡すと、各ラウンドの提案・保留・拒否を記録する（可視化用、省略可）
     """
     # 各Receiverが現在「保留」している契約オブジェクトのリスト
     held_contracts: Dict[str, List[Contract]] = {r_id: [] for r_id in receivers.keys()}
@@ -96,6 +98,13 @@ def generalized_deferred_acceptance(
                         rejected_contracts.append(c)
                 
                 held_contracts[r_id] = chosen
+
+        if trace is not None:
+            trace.append({
+                "proposed": [c for cs in new_proposals.values() for c in cs],
+                "held": [c for cs in held_contracts.values() for c in cs],
+                "rejected": list(rejected_contracts),
+            })
 
         # 3. キューの更新
         unassigned_proposers = []
